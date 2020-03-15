@@ -18,7 +18,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <unistd.h>
-#include <sys/time.h>
 
 #include <fpga_pci.h>
 #include <fpga_mgmt.h>
@@ -184,12 +183,10 @@ int peek_poke_example(int slot_id, int pf_id, int bar_id) {
     rc_pcis = fpga_pci_attach(slot_id, pf_id, 4, 0, &pci_bar_handle_pcis);
     fail_on(rc_pcis, out, "Unable to attach to the AFI on slot id %d", slot_id);
 
-    struct timeval tval_before, tval_after, tval_result;//timing
-    gettimeofday(&tval_before, NULL); //timing
+    //open command files for communication
+    openCMDFiles();
 
-    int n=1;
     while(1){
-    printf("[COUNT = %d]\n",n++);
     // wait for start command
     waitForStart();
     // begin simulation
@@ -203,14 +200,10 @@ int peek_poke_example(int slot_id, int pf_id, int bar_id) {
     waitForDone();
     // transplant back
     writeStateBack(STATE_BASE_ADDR);
-    writeUndefined();
+    writeCheckNStep();
     }
     
 
-    gettimeofday(&tval_after, NULL);// timing
-    //timing
-    timersub(&tval_after, &tval_before, &tval_result);
-    printf("Time elapsed: %ld sec %ld us\n", (long int)tval_result.tv_sec, (long int)tval_result.tv_usec);
 
  out:
     /* clean up */

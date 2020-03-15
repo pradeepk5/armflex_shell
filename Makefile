@@ -22,9 +22,9 @@ CFLAGS = -DCONFIG_LOGLEVEL=4 -std=gnu99 -g -Wall -Werror $(INCLUDES)
 
 LDLIBS = -lfpga_mgmt -lrt -lpthread
 
-SRC = test_cl.c json.c
+SRC = test_cl.c 
 OBJ = $(SRC:.c=.o)
-BIN = test_cl
+BIN = armflex_shell 
 
 all: check_env $(BIN)
 
